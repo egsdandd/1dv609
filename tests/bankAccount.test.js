@@ -50,5 +50,18 @@ describe('BankAccount', () => {
       expect(account.getTransactionHistory()[0].type).toBe('deposit');
     });
 
+    it('should decrease balance after withdrawal', () => {
+      // Arrange
+      const holder = new AccountHolder('Dummy', 'dummy@example.com');
+      const notifier = new NotificationService();
+      const account = new BankAccount(holder, notifier);
+      account.deposit(200); // Starta med pengar på kontot
+      // Act
+      account.withdraw(50);
+      // Assert
+      expect(account.getBalance()).toBe(150);
+    });
+
+
   });
 });
