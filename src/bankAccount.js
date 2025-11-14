@@ -7,6 +7,7 @@ class BankAccount {
   }
   deposit(amount) {
     // TODO: Lägg till deposit-logik och kalla notificationService om behov
+    this.balance += amount
   }
   withdraw(amount) {
     // TODO: Lägg till withdraw-logik och kalla notificationService om behov
