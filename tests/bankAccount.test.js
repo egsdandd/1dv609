@@ -3,13 +3,36 @@ const AccountHolder = require('../src/accountHolder');
 const NotificationService = require('../src/notificationService');
 
 describe('BankAccount', () => {
-  it('should initialize with zero balance', () => {
-    const holder = new AccountHolder('Dummy', 'dummy@example.com');
-    const notifier = new NotificationService();
-    const account = new BankAccount(holder, notifier);
-    expect(account.getBalance()).toBe(0);
+  describe('Initial state', () => {
+    it('should initialize with zero balance', () => {
+      // Arrange
+      const holder = new AccountHolder('Dummy', 'dummy@example.com');
+      const notifier = new NotificationService();
+      const account = new BankAccount(holder, notifier);
+      // Assert
+      expect(account.getBalance()).toBe(0);
+    });
+  });
 
-    account.deposit(100); // Koden för deposit gör inget ännu!
-    expect(account.getBalance()).toBe(100); // Detta kommer misslyckas!
+  describe('Deposit', () => {
+    it('should increase balance after deposit', () => {
+      // Arrange
+      const holder = new AccountHolder('Dummy', 'dummy@example.com');
+      const notifier = new NotificationService();
+      const account = new BankAccount(holder, notifier);
+      // Act
+      account.deposit(100);
+      // Assert
+      expect(account.getBalance()).toBe(100);
+    });
+
+    it('should throw error when depositing negative amount', () => {
+      // Arrange
+      const holder = new AccountHolder('Dummy', 'dummy@example.com');
+      const notifier = new NotificationService();
+      const account = new BankAccount(holder, notifier);
+      // Assert
+      expect(() => account.deposit(-50)).toThrow();
+    });
   });
 });
