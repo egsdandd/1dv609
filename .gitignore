@@ -4,6 +4,9 @@
 /build
 /tmp
 
+# NYC output
+.nyc_output
+
 # Logs
 logs
 *.log

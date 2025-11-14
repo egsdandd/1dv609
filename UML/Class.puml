@@ -1,0 +1,33 @@
+@startuml BankAccount
+
+class AccountHolder {
+  - name: String
+  - email: String
+}
+
+class NotificationService {
+  + notify(message: String): void
+}
+
+class Transaction {
+  - amount: Number
+  - type: String
+  - date: Date
+}
+
+class BankAccount {
+  - balance: Number
+  - transactions: Transaction[]
+  - accountHolder: AccountHolder
+  - notificationService: NotificationService
+  + deposit(amount: Number): void
+  + withdraw(amount: Number): void
+  + getBalance(): Number
+  + getTransactionHistory(): Transaction[]
+}
+
+BankAccount "1" -- "1" AccountHolder
+BankAccount "1" -- "1" NotificationService
+BankAccount "1" -- "*" Transaction
+
+@enduml

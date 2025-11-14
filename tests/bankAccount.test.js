@@ -8,5 +8,8 @@ describe('BankAccount', () => {
     const notifier = new NotificationService();
     const account = new BankAccount(holder, notifier);
     expect(account.getBalance()).toBe(0);
+
+    account.deposit(100); // Koden för deposit gör inget ännu!
+    expect(account.getBalance()).toBe(100); // Detta kommer misslyckas!
   });
 });
