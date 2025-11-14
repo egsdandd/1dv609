@@ -36,5 +36,19 @@ describe('BankAccount', () => {
       // Assert
       expect(actDepositNegative).toThrow();
     });
+
+    it('should record a transaction after deposit', () => {
+      // Arrange
+      const holder = new AccountHolder('Dummy', 'dummy@example.com');
+      const notifier = new NotificationService();
+      const account = new BankAccount(holder, notifier);
+      // Act
+      account.deposit(150);
+      // Assert
+      expect(account.getTransactionHistory().length).toBe(1);
+      expect(account.getTransactionHistory()[0].amount).toBe(150);
+      expect(account.getTransactionHistory()[0].type).toBe('deposit');
+    });
+
   });
 });

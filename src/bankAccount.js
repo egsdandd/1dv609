@@ -17,7 +17,7 @@ class BankAccount {
     this.balance += amount;
     // Log transaction
     const tx = new Transaction(amount, 'deposit');
-    this.transactions.push(tx);
+    // this.transactions.push(tx);
     // Optionally notify for large deposits
     if (amount > 10000 && this.notificationService) {
       this.notificationService.notify(`Large deposit: ${amount} SEK`);
