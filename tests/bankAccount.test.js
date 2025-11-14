@@ -31,8 +31,10 @@ describe('BankAccount', () => {
       const holder = new AccountHolder('Dummy', 'dummy@example.com');
       const notifier = new NotificationService();
       const account = new BankAccount(holder, notifier);
+      // Act
+      const actDepositNegative = () => account.deposit(-50);
       // Assert
-      expect(() => account.deposit(-50)).toThrow();
+      expect(actDepositNegative).toThrow();
     });
   });
 });
