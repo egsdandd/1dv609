@@ -7,6 +7,9 @@
 # NYC output
 .nyc_output
 
+# Jest Coverage
+coverage
+
 # Logs
 logs
 *.log
