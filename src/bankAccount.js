@@ -25,7 +25,20 @@ class BankAccount {
   }
 
   withdraw(amount) {
-    // TODO: Implement withdraw logic
+    // Validate amount
+    if (typeof amount !== 'number' || amount <= 0) {
+      throw new Error('Invalid amount. The withdrawal amount must be a positive number.');
+    }
+    // Check sufficient balance
+    if (this.balance < amount) {
+      throw new Error('Insufficient funds.');
+    }
+    // Update balance
+    this.balance -= amount;
+    // Log transaction
+    const tx = new Transaction(amount, 'withdraw');
+    this.transactions.push(tx);
+    return this.balance;
   }
 
   getBalance() {
