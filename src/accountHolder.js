@@ -3,5 +3,6 @@ class AccountHolder {
     this.name = name;
     this.email = email;
   }
+  
 }
 module.exports = AccountHolder;

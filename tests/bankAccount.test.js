@@ -41,8 +41,8 @@ describe('BankAccount', () => {
   describe('Deposit large amount', () => {
     it('should notify for large deposits', () => {
       const notifySpy = jest.spyOn(notifier, 'notify'); // använd 'notifier'
-      account.deposit(150000);
-      expect(notifySpy).toHaveBeenCalledWith('Large deposit: 1500000 SEK');
+      account.deposit(15000);
+      expect(notifySpy).toHaveBeenCalledWith('Large deposit: 15000 SEK');
     });
   });
 
