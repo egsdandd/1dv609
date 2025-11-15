@@ -2,8 +2,8 @@
   "name": "1dv609",
   "version": "1.0.0",
   "description": "Sw Testing TDD",
-  "main": "index.js",
   "scripts": {
+    "start": "node bin/main.js",
     "test": "jest --coverage --verbose"
   },
   "repository": {
