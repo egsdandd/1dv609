@@ -1,12 +1,15 @@
+// bankAccount.test.js
+
 const BankAccount = require('../src/bankAccount');
 const AccountHolder = require('../src/accountHolder');
-const NotificationService = require('../src/notificationService');
+// const NotificationService = require('../src/notificationService'); // Kommenterad ut
+const NotificationServiceMock = require('./__mocks__/notificationService.mock');
 
 let holder, notifier, account;
 
 beforeEach(() => {
   holder = new AccountHolder('Dummy', 'dummy@example.com');
-  notifier = new NotificationService();
+  notifier = new NotificationServiceMock(); // Mock-instans
   account = new BankAccount(holder, notifier);
 });
 
@@ -33,14 +36,13 @@ describe('BankAccount', () => {
       expect(account.getTransactionHistory()[0].amount).toBe(150);
       expect(account.getTransactionHistory()[0].type).toBe('deposit');
     });
+  });
 
-  });  
-  
   describe('Deposit large amount', () => {
     it('should notify for large deposits', () => {
-      const notifySpy = jest.spyOn(notifier, 'notify');
-      account.deposit(15000);
-      expect(notifySpy).toHaveBeenCalledWith('Large deposit: 15000 SEK');
+      const notifySpy = jest.spyOn(notifier, 'notify'); // använd 'notifier'
+      account.deposit(150000);
+      expect(notifySpy).toHaveBeenCalledWith('Large deposit: 1500000 SEK');
     });
   });
 
