@@ -6,12 +6,15 @@ class AccountHolder {
     if (!email || email.trim() === '') {
       throw new Error('Email is required');
     }
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
+    if (!emailPattern.test(trimmedEmail)) {
       throw new Error('Invalid email format');
     }
-    this.name = name;
-    this.email = email;
+    this.name = trimmedName;
+    this.email = trimmedEmail;
   }
 }
 module.exports = AccountHolder;
