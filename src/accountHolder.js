@@ -1,20 +1,26 @@
 class AccountHolder {
   constructor(name, email) {
+    this.setName(name);
+    this.setEmail(email);
+  }
+
+  setName(name) {
     if (!name || name.trim() === '') {
       throw new Error('Name is required');
     }
-    if (!email || email.trim() === '') {
-      throw new Error('Email is required');
-    }
-    const trimmedName = name.trim();
-    const trimmedEmail = email.trim();
+    this.name = name.trim();
+  }
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(trimmedEmail)) {
-      throw new Error('Invalid email format');
+  setEmail(email) {
+    if (!email || !this.isValidEmail(email.trim())) {
+      throw new Error('Valid email is required');
     }
-    this.name = trimmedName;
-    this.email = trimmedEmail;
+    this.email = email.trim();
+  }
+
+  isValidEmail(email) {
+    return /\S+@\S+\.\S+/.test(email);
   }
 }
+
 module.exports = AccountHolder;
