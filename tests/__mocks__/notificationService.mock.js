@@ -1,8 +1,6 @@
 class NotificationServiceMock {
-  notify(message) {
-    // Loggar eller samlar meddelanden för teständamål
-    console.log('Notification sent:', message);
-    return message;
+  constructor() {
+    this.notify = jest.fn(); // Spy-funktion som loggar anrop internt för tester
   }
 }
 module.exports = NotificationServiceMock;
