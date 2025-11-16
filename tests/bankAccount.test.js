@@ -2,7 +2,7 @@
 
 const BankAccount = require('../src/bankAccount');
 const AccountHolder = require('../src/accountHolder');
-// const NotificationService = require('../src/notificationService'); // Kommenterad ut
+// const NotificationService = require('../src/notificationService');
 const NotificationServiceMock = require('./__mocks__/notificationService.mock');
 
 let holder, notifier, account;

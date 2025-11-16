@@ -1,6 +1,6 @@
 const readline = require('readline');
 const main = require('../../bin/main');
-const accountMenu = require('../../bin/account');
+const accountMenu = require('../../bin/accountMenu');
 
 jest.mock('readline');
 

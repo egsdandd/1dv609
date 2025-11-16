@@ -1,5 +1,6 @@
 const readline = require('readline');
-const accountMenu = require('./account');
+const accountMenu = require('./accountMenu');
+const bankAccountMenu = require('./bankAccountMenu')
 
 function createInterface() {
   return readline.createInterface({
@@ -24,7 +25,8 @@ function showMainMenu(rl) {
         bankAccountMenu.showMenu(rl, () => showMainMenu(rl));
         break;
       case '3':
-        transactionMenu.showMenu(rl, () => showMainMenu(rl));
+        console.log('Transaktioner hanteras via BankAccount-menyn (val 2).');
+        showMainMenu(rl);
         break;
       case '0':
         rl.close();
