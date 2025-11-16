@@ -1,7 +1,8 @@
-// AccountMenu.js
 const AccountHolder = require('../src/accountHolder');
+const NotificationService = require('../src/notificationService'); // importera notification service
 
 let accountHolders = [];
+const notificationService = new NotificationService('console', { saveNotifications: false }); // Stäng av loggning i prod
 
 // Hjälpfunktion för att göra rl.question till en Promise
 function questionAsync(rl, prompt) {
@@ -44,7 +45,7 @@ async function addAccountHolder(rl) {
   try {
     const name = await questionAsync(rl, 'Ange namn: ');
     const email = await questionAsync(rl, 'Ange email: ');
-    const holder = new AccountHolder(name, email);
+    const holder = new AccountHolder(name, email, notificationService); // skicka in notification service
     accountHolders.push(holder);
     console.log('AccountHolder tillagd!');
   } catch (err) {
@@ -69,16 +70,21 @@ async function updateAccountHolder(rl) {
     const index = parseInt(numStr) - 1;
     if (index < 0 || index >= accountHolders.length) {
       console.log('Ogiltigt val.');
+      notificationService.notify('Ogiltigt val vid uppdatering av AccountHolder.');
       return await updateAccountHolder(rl);
     }
     const holder = accountHolders[index];
+    const oldName = holder.name;
+    const oldEmail = holder.email;
     const name = await questionAsync(rl, `Ange nytt namn (nuvarande: ${holder.name}): `);
     const email = await questionAsync(rl, `Ange ny email (nuvarande: ${holder.email}): `);
     if (name !== '') holder.setName(name);
     if (email !== '') holder.setEmail(email);
     console.log('AccountHolder uppdaterad!');
+    notificationService.notify(`AccountHolder uppdaterad: ${oldName} (${oldEmail}) till ${holder.name} (${holder.email})`);
   } catch (err) {
     console.log('Fel:', err.message);
+    notificationService.notify(`Fel vid uppdatering av AccountHolder: ${err.message}`);
   }
 }
 
@@ -89,12 +95,15 @@ async function deleteAccountHolder(rl) {
     const index = parseInt(numStr) - 1;
     if (index < 0 || index >= accountHolders.length) {
       console.log('Ogiltigt val.');
+      notificationService.notify('Ogiltigt val vid borttagning av AccountHolder.');
       return await deleteAccountHolder(rl);
     }
-    accountHolders.splice(index, 1);
+    const removed = accountHolders.splice(index, 1)[0];
     console.log('AccountHolder borttagen!');
+    notificationService.notify(`AccountHolder borttagen: ${removed.name} (${removed.email})`);
   } catch (err) {
     console.log('Fel:', err.message);
+    notificationService.notify(`Fel vid borttagning av AccountHolder: ${err.message}`);
   }
 }
 
