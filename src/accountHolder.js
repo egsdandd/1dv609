@@ -1,13 +1,7 @@
 class AccountHolder {
-  constructor(name, email, notificationService = null) {
+  constructor(name, email) {
     this.setName(name);
     this.setEmail(email);
-    this.notificationService = notificationService;
-
-    // Skicka notifikation om notifieringstjänst finns
-    if (this.notificationService) {
-      this.notificationService.notify(`Ny användare skapad: ${this.name} (${this.email})`);
-    }
   }
 
   setName(name) {

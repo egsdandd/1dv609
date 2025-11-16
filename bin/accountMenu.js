@@ -1,12 +1,21 @@
 const AccountHolder = require('../src/accountHolder');
-const NotificationService = require('../src/notificationService'); // importera notification service
+const NotificationService = require('../src/notificationService');
 
 let accountHolders = [];
-const notificationService = new NotificationService('console', { saveNotifications: false }); // Stäng av loggning i prod
+const notificationService = new NotificationService('console', { saveNotifications: false });
 
-// Hjälpfunktion för att göra rl.question till en Promise
+// Hjälpfunktion för rl.question som Promise
 function questionAsync(rl, prompt) {
   return new Promise(resolve => rl.question(prompt, answer => resolve(answer.trim())));
+}
+
+// Hjälpfunktion för notifieringar med try/catch för säkerhet
+function notifySafe(message) {
+  try {
+    notificationService.notify(message);
+  } catch {
+    // Tyst ignorera notifieringsfel för stabilitet
+  }
 }
 
 async function showMenu(rl, backToMainMenu) {
@@ -37,7 +46,6 @@ async function showMenu(rl, backToMainMenu) {
     default:
       console.log('Ogiltigt val, försök igen.');
   }
-  // Visa menyn igen i alla fall
   showMenu(rl, backToMainMenu);
 }
 
@@ -45,11 +53,13 @@ async function addAccountHolder(rl) {
   try {
     const name = await questionAsync(rl, 'Ange namn: ');
     const email = await questionAsync(rl, 'Ange email: ');
-    const holder = new AccountHolder(name, email, notificationService); // skicka in notification service
+    const holder = new AccountHolder(name, email);
     accountHolders.push(holder);
     console.log('AccountHolder tillagd!');
+    notifySafe(`Ny användare skapad: ${holder.name} (${holder.email})`);
   } catch (err) {
     console.log('Fel:', err.message);
+    notifySafe(`Fel vid skapande av AccountHolder: ${err.message}`);
   }
 }
 
@@ -70,21 +80,24 @@ async function updateAccountHolder(rl) {
     const index = parseInt(numStr) - 1;
     if (index < 0 || index >= accountHolders.length) {
       console.log('Ogiltigt val.');
-      notificationService.notify('Ogiltigt val vid uppdatering av AccountHolder.');
+      notifySafe('Ogiltigt val vid uppdatering av AccountHolder.');
       return await updateAccountHolder(rl);
     }
+
     const holder = accountHolders[index];
     const oldName = holder.name;
     const oldEmail = holder.email;
     const name = await questionAsync(rl, `Ange nytt namn (nuvarande: ${holder.name}): `);
     const email = await questionAsync(rl, `Ange ny email (nuvarande: ${holder.email}): `);
+
     if (name !== '') holder.setName(name);
     if (email !== '') holder.setEmail(email);
+
     console.log('AccountHolder uppdaterad!');
-    notificationService.notify(`AccountHolder uppdaterad: ${oldName} (${oldEmail}) till ${holder.name} (${holder.email})`);
+    notifySafe(`AccountHolder uppdaterad: ${oldName} (${oldEmail}) till ${holder.name} (${holder.email})`);
   } catch (err) {
     console.log('Fel:', err.message);
-    notificationService.notify(`Fel vid uppdatering av AccountHolder: ${err.message}`);
+    notifySafe(`Fel vid uppdatering av AccountHolder: ${err.message}`);
   }
 }
 
@@ -93,17 +106,19 @@ async function deleteAccountHolder(rl) {
   try {
     const numStr = await questionAsync(rl, 'Ange numret på den du vill ta bort: ');
     const index = parseInt(numStr) - 1;
+
     if (index < 0 || index >= accountHolders.length) {
       console.log('Ogiltigt val.');
-      notificationService.notify('Ogiltigt val vid borttagning av AccountHolder.');
+      notifySafe('Ogiltigt val vid borttagning av AccountHolder.');
       return await deleteAccountHolder(rl);
     }
+
     const removed = accountHolders.splice(index, 1)[0];
     console.log('AccountHolder borttagen!');
-    notificationService.notify(`AccountHolder borttagen: ${removed.name} (${removed.email})`);
+    notifySafe(`AccountHolder borttagen: ${removed.name} (${removed.email})`);
   } catch (err) {
     console.log('Fel:', err.message);
-    notificationService.notify(`Fel vid borttagning av AccountHolder: ${err.message}`);
+    notifySafe(`Fel vid borttagning av AccountHolder: ${err.message}`);
   }
 }
 
