@@ -4,6 +4,8 @@ const accountMenu = require('../../bin/account');
 
 jest.mock('readline');
 
+const TIMEOUT = 500; // justerbar timeout för setTimeout i tester
+
 describe('Main CLI', () => {
     let rl;
     let logs = [];
@@ -40,7 +42,7 @@ describe('Main CLI', () => {
         expect(rl.close).toHaveBeenCalled();
     });
 
-    test('adderar Danne och Bob och kontrollerar listan', (done) => {
+    test('adderar danne och bob och kontrollerar listan', (done) => {
         // Simulera inputflödet:
         // Huvudmeny: 1 (Hantera AccountHolder)
         // AccountHolder meny: 1 (Lägg till)
@@ -73,7 +75,7 @@ describe('Main CLI', () => {
             expect(bob).toBeDefined();
             expect(accountMenu.accountHolders.length).toBe(2);
             done();
-        }, 300);
+        }, TIMEOUT);
     });
     test('tar bort danne och kontrollerar att endast bob finns kvar', (done) => {
         // Förbered initial data med danne och bob
@@ -98,7 +100,32 @@ describe('Main CLI', () => {
             expect(remaining.name).toBe('bob');
             expect(remaining.email).toBe('bob@mail.se');
             done();
-        }, 300);
+        }, TIMEOUT);
+    });
+    test('uppdaterar dannes email till danne2@mail.se', (done) => {
+        // Förbered med danne i listan
+        accountMenu.accountHolders.length = 0;
+        accountMenu.accountHolders.push(
+            new (require('../../src/accountHolder'))('danne', 'danne@mail.se')
+        );
+
+        rl.question
+            .mockImplementationOnce((prompt, cb) => cb('1'))          // huvudmeny: Hantera AccountHolder
+            .mockImplementationOnce((prompt, cb) => cb('3'))          // AccountHolder meny: Uppdatera
+            .mockImplementationOnce((prompt, cb) => cb('1'))          // välj nr 1: danne
+            .mockImplementationOnce((prompt, cb) => cb(''))           // nytt namn (blankt = ingen ändring)
+            .mockImplementationOnce((prompt, cb) => cb('danne2@mail.se')) // ny email
+            .mockImplementationOnce((prompt, cb) => cb('0'))          // tillbaka i AccountHolder meny
+            .mockImplementationOnce((prompt, cb) => cb('0'));         // avsluta i huvudmeny
+
+        main.showMainMenu(rl);
+
+        setTimeout(() => {
+            const danne = accountMenu.accountHolders.find(h => h.name === 'danne');
+            expect(danne).toBeDefined();
+            expect(danne.email).toBe('danne2@mail.se');
+            done();
+        }, TIMEOUT);
     });
 
 });
