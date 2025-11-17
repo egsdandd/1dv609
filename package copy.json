@@ -4,7 +4,7 @@
   "description": "Sw Testing TDD",
   "scripts": {
     "start": "node bin/main.js",
-    "test": "jest --coverage --verbose"
+    "test": "node --no-experimental-webstorage ./node_modules/jest/bin/jest.js --coverage --verbose"
   },
   "repository": {
     "type": "git",
