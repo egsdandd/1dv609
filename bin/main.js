@@ -1,13 +1,7 @@
 const readline = require('readline');
 const accountMenu = require('./accountMenu');
 const bankAccountMenu = require('./bankAccountMenu')
-const NotificationService = require('../src/notificationService');
-
-// Skapa en global notifieringstjänst för huvudmenyn
-const notificationService = new NotificationService('console', { saveNotifications: true });
-
-// Dela notifieringstjänsten med accountMenu
-accountMenu.setNotificationService(notificationService);
+const notificationService = require('../src/services/notificationServiceSingleton');
 
 function createInterface() {
   return readline.createInterface({

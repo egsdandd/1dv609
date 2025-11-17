@@ -1,9 +1,8 @@
 const BankAccount = require('../src/bankAccount');
-const accountHoldersModule = require('./accountMenu');  // Eller rätt sökväg till din accountHolder-modul
+const accountHoldersModule = require('./accountMenu');  // Rätt sökväg till accountMenu modulen
+const notificationService = require('../src/services/notificationServiceSingleton'); // Importera singletonen
 
 const accountHolders = accountHoldersModule.accountHolders;
-const NotificationService = require('../src/notificationService');  // rätt sökväg till din NotificationService
-const notificationService = new NotificationService('console', { saveNotifications: true }); // du kan välja kanal och options
 
 const bankAccounts = new Map();  // Map från accountHolder till BankAccount-instans
 
@@ -90,12 +89,13 @@ async function bankAccountOperations(rl, bankAccount) {
       }
       break;
     }
-    case '3':
+    case '3': {
       const balance = bankAccount.getBalance();
       console.log(`Saldo: ${balance} SEK.`);
       notificationService.notify(`Saldo visades: ${balance} SEK på konto för ${bankAccount.accountHolder.name}.`);
       break;
-    case '4':
+    }
+    case '4': {
       const history = bankAccount.getTransactionHistory();
       if (history.length === 0) {
         console.log('Ingen transaktionshistorik.');
@@ -108,6 +108,7 @@ async function bankAccountOperations(rl, bankAccount) {
         notificationService.notify(`Transaktionshistorik visades för konto ${bankAccount.accountHolder.name}. Totalt ${history.length} poster.`);
       }
       break;
+    }
     case '0':
       return; // Tillbaka till huvudmenyn
     default:
@@ -118,6 +119,5 @@ async function bankAccountOperations(rl, bankAccount) {
   // Efter operation, visa operationsmenyn igen
   await bankAccountOperations(rl, bankAccount);
 }
-
 
 module.exports = { showMenu, bankAccounts };

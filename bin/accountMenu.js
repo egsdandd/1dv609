@@ -1,23 +1,19 @@
 const AccountHolder = require('../src/accountHolder');
+const notificationService = require('../src/services/notificationServiceSingleton'); // En gemensam NotificationService-instans
 
 let accountHolders = [];
-let notificationService = null;
-
-function setNotificationService(service) {
-  notificationService = service;
-}
 
 // Hjälpfunktion för rl.question som Promise
 function questionAsync(rl, prompt) {
   return new Promise(resolve => rl.question(prompt, answer => resolve(answer.trim())));
 }
 
-// Hjälpfunktion för notifieringar med try/catch för säkerhet
+// Hjälpfunktion för notifiering med skydd mot fel
 function notifySafe(message) {
   try {
     notificationService.notify(message);
   } catch {
-    // Tyst ignorera notifieringsfel för stabilitet
+    // Ignorera fel i notifieringen för stabilitet
   }
 }
 
@@ -44,11 +40,11 @@ async function showMenu(rl, backToMainMenu) {
       await deleteAccountHolder(rl);
       break;
     case '0':
-      backToMainMenu();
-      return;
+      return backToMainMenu();
     default:
       console.log('Ogiltigt val, försök igen.');
   }
+  // Visa menyn igen efter val
   showMenu(rl, backToMainMenu);
 }
 
@@ -58,6 +54,8 @@ async function addAccountHolder(rl) {
     const email = await questionAsync(rl, 'Ange email: ');
     const holder = new AccountHolder(name, email);
     accountHolders.push(holder);
+
+    console.log('AccountHolder tillagd!');
     notifySafe(`Ny användare skapad: ${holder.name} (${holder.email})`);
   } catch (err) {
     console.log('Fel:', err.message);
@@ -79,7 +77,7 @@ async function updateAccountHolder(rl) {
   listAccountHolders();
   try {
     const numStr = await questionAsync(rl, 'Ange numret på den du vill uppdatera: ');
-    const index = parseInt(numStr) - 1;
+    const index = parseInt(numStr, 10) - 1;
     if (index < 0 || index >= accountHolders.length) {
       console.log('Ogiltigt val.');
       notifySafe('Ogiltigt val vid uppdatering av AccountHolder.');
@@ -107,8 +105,7 @@ async function deleteAccountHolder(rl) {
   listAccountHolders();
   try {
     const numStr = await questionAsync(rl, 'Ange numret på den du vill ta bort: ');
-    const index = parseInt(numStr) - 1;
-
+    const index = parseInt(numStr, 10) - 1;
     if (index < 0 || index >= accountHolders.length) {
       console.log('Ogiltigt val.');
       notifySafe('Ogiltigt val vid borttagning av AccountHolder.');
@@ -124,4 +121,4 @@ async function deleteAccountHolder(rl) {
   }
 }
 
-module.exports = { showMenu, accountHolders, setNotificationService };
+module.exports = { showMenu, accountHolders };
