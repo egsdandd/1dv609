@@ -1,6 +1,13 @@
 const readline = require('readline');
 const accountMenu = require('./accountMenu');
 const bankAccountMenu = require('./bankAccountMenu')
+const NotificationService = require('../src/notificationService');
+
+// Skapa en global notifieringstjänst för huvudmenyn
+const notificationService = new NotificationService('console', { saveNotifications: true });
+
+// Dela notifieringstjänsten med accountMenu
+accountMenu.setNotificationService(notificationService);
 
 function createInterface() {
   return readline.createInterface({
@@ -14,8 +21,9 @@ function showMainMenu(rl) {
   console.log('\n---- Huvudmeny ----');
   console.log('1. Hantera AccountHolder');
   console.log('2. Hantera BankAccount');
-  console.log('3. Hantera Transaction');
+  console.log('3. Lista notifieringar');
   console.log('0. Avsluta');
+
   rl.question('Välj ett alternativ: ', (answer) => {
     switch (answer.trim()) {
       case '1':
@@ -25,7 +33,17 @@ function showMainMenu(rl) {
         bankAccountMenu.showMenu(rl, () => showMainMenu(rl));
         break;
       case '3':
-        console.log('Transaktioner hanteras via BankAccount-menyn (val 2).');
+        // Visar alla notifieringar
+        const notifications = notificationService.getNotifications();
+        if (notifications.length === 0) {
+          console.log('Inga notifieringar.');
+        } else {
+          console.log('Notifieringar:');
+          notifications.forEach((msg, index) => {
+            console.log(`${index + 1}. ${msg}`);
+          });
+        }
+        // Efter listning, visa menyn igen
         showMainMenu(rl);
         break;
       case '0':
@@ -37,7 +55,6 @@ function showMainMenu(rl) {
     }
   });
 }
-
 
 // Starta CLI bara om filen körs direkt (inte vid require/import i tester)
 if (require.main === module) {

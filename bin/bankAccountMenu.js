@@ -2,6 +2,8 @@ const BankAccount = require('../src/bankAccount');
 const accountHoldersModule = require('./accountMenu');  // Eller rätt sökväg till din accountHolder-modul
 
 const accountHolders = accountHoldersModule.accountHolders;
+const NotificationService = require('../src/notificationService');  // rätt sökväg till din NotificationService
+const notificationService = new NotificationService('console', { saveNotifications: true }); // du kan välja kanal och options
 
 const bankAccounts = new Map();  // Map från accountHolder till BankAccount-instans
 
@@ -68,8 +70,10 @@ async function bankAccountOperations(rl, bankAccount) {
       try {
         bankAccount.deposit(amount);
         console.log(`Insatt ${amount} SEK.`);
+        notificationService.notify(`Insättning: ${amount} SEK till konto för ${bankAccount.accountHolder.name}.`);
       } catch (err) {
         console.log(`Fel: ${err.message}`);
+        notificationService.notify(`Fel vid insättning: ${err.message} for konto ${bankAccount.accountHolder.name}.`);
       }
       break;
     }
@@ -79,33 +83,41 @@ async function bankAccountOperations(rl, bankAccount) {
       try {
         bankAccount.withdraw(amount);
         console.log(`Tagit ut ${amount} SEK.`);
+        notificationService.notify(`Uttag: ${amount} SEK från konto för ${bankAccount.accountHolder.name}.`);
       } catch (err) {
         console.log(`Fel: ${err.message}`);
+        notificationService.notify(`Fel vid uttag: ${err.message} för konto ${bankAccount.accountHolder.name}.`);
       }
       break;
     }
     case '3':
-      console.log(`Saldo: ${bankAccount.getBalance()} SEK.`);
+      const balance = bankAccount.getBalance();
+      console.log(`Saldo: ${balance} SEK.`);
+      notificationService.notify(`Saldo visades: ${balance} SEK på konto för ${bankAccount.accountHolder.name}.`);
       break;
     case '4':
       const history = bankAccount.getTransactionHistory();
       if (history.length === 0) {
         console.log('Ingen transaktionshistorik.');
+        notificationService.notify(`Transaktionshistorik visades: Ingen historik för konto ${bankAccount.accountHolder.name}.`);
       } else {
         console.log('Transaktionshistorik:');
         history.forEach((tx, i) =>
           console.log(`${i + 1}. ${tx.type} - ${tx.amount} SEK`)
         );
+        notificationService.notify(`Transaktionshistorik visades för konto ${bankAccount.accountHolder.name}. Totalt ${history.length} poster.`);
       }
       break;
     case '0':
       return; // Tillbaka till huvudmenyn
     default:
       console.log('Ogiltigt val.');
+      notificationService.notify(`Ogiltigt val i BankAccount-menyn för konto ${bankAccount.accountHolder.name}.`);
   }
 
   // Efter operation, visa operationsmenyn igen
   await bankAccountOperations(rl, bankAccount);
 }
+
 
 module.exports = { showMenu, bankAccounts };

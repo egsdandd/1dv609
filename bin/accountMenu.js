@@ -1,8 +1,11 @@
 const AccountHolder = require('../src/accountHolder');
-const NotificationService = require('../src/notificationService');
 
 let accountHolders = [];
-const notificationService = new NotificationService('console', { saveNotifications: false });
+let notificationService = null;
+
+function setNotificationService(service) {
+  notificationService = service;
+}
 
 // Hjälpfunktion för rl.question som Promise
 function questionAsync(rl, prompt) {
@@ -55,7 +58,6 @@ async function addAccountHolder(rl) {
     const email = await questionAsync(rl, 'Ange email: ');
     const holder = new AccountHolder(name, email);
     accountHolders.push(holder);
-    console.log('AccountHolder tillagd!');
     notifySafe(`Ny användare skapad: ${holder.name} (${holder.email})`);
   } catch (err) {
     console.log('Fel:', err.message);
@@ -122,4 +124,4 @@ async function deleteAccountHolder(rl) {
   }
 }
 
-module.exports = { showMenu, accountHolders };
+module.exports = { showMenu, accountHolders, setNotificationService };
