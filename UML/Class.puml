@@ -1,33 +1,49 @@
 @startuml BankAccount
 
 class AccountHolder {
-  - name: String
-  - email: String
+  - #name: String
+  - #email: String
+  + constructor(name: String, email: String)
+  + get name(): String
+  + get email(): String
+  + setName(name: String): void
+  + setEmail(email: String): void
+  + isValidEmail(email: String): boolean
 }
 
 class NotificationService {
+  - channel: String
+  - saveNotifications: boolean
+  - maxNotifications: Number
+  - notifications: String[]
+  + constructor(channel: String, options: Object)
   + notify(message: String): void
+  + getNotifications(): String[]
+  + clear(): void
 }
 
 class Transaction {
-  - amount: Number
-  - type: String
-  - date: Date
+  + amount: Number
+  + type: String
+  + date: Date
+  + constructor(amount: Number, type: String, date: Date)
 }
 
 class BankAccount {
-  - balance: Number
-  - transactions: Transaction[]
-  - accountHolder: AccountHolder
-  - notificationService: NotificationService
+  - #accountHolder: AccountHolder
+  - #notificationService: NotificationService
+  - #transactions: Transaction[]
+  - #balance: Number
+  + constructor(accountHolder: AccountHolder, notificationService: NotificationService)
+  + get accountHolder(): AccountHolder
   + deposit(amount: Number): void
-  + withdraw(amount: Number): void
+  + withdraw(amount: Number): Number
   + getBalance(): Number
   + getTransactionHistory(): Transaction[]
 }
 
-BankAccount "1" -- "1" AccountHolder
-BankAccount "1" -- "1" NotificationService
-BankAccount "1" -- "*" Transaction
+BankAccount "1" *-- "1" AccountHolder : has
+BankAccount "1" o-- "1" NotificationService : uses
+BankAccount "1" *-- "*" Transaction : contains
 
 @enduml
